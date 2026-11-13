@@ -1,0 +1,13 @@
+{
+  "name": "dev-squad-marketplace",
+  "owner": { "name": "devsys" },
+  "metadata": { "description": "dev-squad: 6-agent backend/frontend team (junior, senior/tech lead, QA) driven by ProjectInfo/." },
+  "plugins": [
+    {
+      "name": "dev-squad",
+      "source": "./plugins/dev-squad",
+      "description": "Backend (.NET) and frontend (Angular) junior, senior/tech-lead and QA agents that hand work to each other through ProjectInfo/tasks.",
+      "version": "0.1.0"
+    }
+  ]
+}
