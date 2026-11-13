@@ -4,7 +4,7 @@ This project has a six-agent team. Subagents cannot call each other, so **this c
 
 ## Project knowledge: `ProjectInfo/`
 
-Every agent reads `ProjectInfo/*.md` first (project, architecture, conventions, glossary...). Project rules there always win over agent defaults. If `ProjectInfo/` does not exist, run the `dev-squad:init-projectinfo` skill and ask the user to fill it in before any agent works. Never invent its contents.
+Every agent reads `ProjectInfo/*.md` first (project, architecture, glossary...). Stack conventions (.NET + MariaDB, Angular) come from the plugin skills; `ProjectInfo/conventions-*.md` is an optional override. Agents detect versions and build/test commands from the code when ProjectInfo does not state them. Project rules there always win over agent defaults. If `ProjectInfo/` does not exist, run the `dev-squad:init-projectinfo` skill and ask the user to fill it in before any agent works. Never invent its contents.
 
 ## The team
 
@@ -16,6 +16,7 @@ Every agent reads `ProjectInfo/*.md` first (project, architecture, conventions, 
 | `frontend-junior` | Frontend (Angular) developer: implements one task | Yes |
 | `qa-backend` | Validates backend tasks with executed evidence | No |
 | `qa-frontend` | Validates frontend tasks with executed evidence | No |
+| `ui-designer` | Writes `ProjectInfo/design.md`, builds the design system and pattern-setting UI (admin shell, themed components) | UI pattern-setting tasks |
 
 ## Routing (re-evaluate on every user message)
 
@@ -24,6 +25,7 @@ Every agent reads `ProjectInfo/*.md` first (project, architecture, conventions, 
 | New feature / story / "plan", "break down", "create tasks" | Backend part -> `backend-senior` (PLAN); UI part -> `frontend-senior` (PLAN). For full-stack work run `backend-senior` first so the API contract exists, then `frontend-senior`. |
 | Implement / fix a task, "work on T-012" | The task's `Area` decides: `backend` -> `backend-junior`, `frontend` -> `frontend-junior` |
 | Review a task / "review T-012" | `backend-senior` or `frontend-senior` (REVIEW) |
+| Look and feel, design direction, theme, design system, style guide, "make it look better" | `ui-designer` (DESIGN DIRECTION) |
 | Test / validate / "QA T-012" | `qa-backend` or `qa-frontend` |
 | Unclear | Ask the user. Do not guess. |
 
@@ -53,6 +55,12 @@ Orchestrator loop for each task:
 6. Stop and ask the user on: a 3rd review round for one task, QA `BLOCKED`, `ESCALATE`, a business decision, or a red build outside the task.
 
 Show the user one short line per step (e.g. `T-012 round 2: backend-senior requested 3 changes`) and each QA verdict in full.
+
+## UI work
+
+- **No screen is built before `ProjectInfo/design.md` is `Status: approved`.** If a `UI: yes` task comes up and it is missing or a draft, run `ui-designer` in DESIGN DIRECTION mode, show the user the summary, and wait for approval.
+- Tasks with `UI: yes` and `Pattern-setting: yes` (design tokens, theme, shell, shared components, first screen of a new kind) are implemented by `ui-designer`; other `UI: yes` tasks go to `frontend-junior`, which mirrors the designer's reference screen. `frontend-senior` reviews either way, and QA verifies fresh screenshots.
+- Every UI task ends with the screenshot look-and-critique loop from the `dev-squad:ui-design` skill.
 
 ## Full-stack features
 

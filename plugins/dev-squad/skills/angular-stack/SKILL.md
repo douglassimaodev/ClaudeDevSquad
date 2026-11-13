@@ -5,7 +5,7 @@ description: Frontend stack reference for the dev-squad frontend agents - Angula
 
 # Frontend stack: Angular (latest stable)
 
-Defaults derived from a reference project (TradesApp: Angular 22, signals, standalone, SCSS, Syncfusion, Vitest, Playwright). **If `ProjectInfo/conventions-frontend.md` or `architecture.md` says otherwise, the project wins.** Read the real versions from `package.json` / `angular.json` first. A new project uses the latest stable Angular major; an existing project keeps its major unless a task says to upgrade. Use the APIs of the installed version, not older idioms from memory; when unsure, check the project's own code or the Angular docs for that version.
+Defaults derived from a reference project (TradesApp: Angular 22, signals, standalone, SCSS, Syncfusion, Vitest, Playwright). **If `ProjectInfo/conventions-frontend.md` or `architecture.md` says otherwise, the project wins.** Read the real versions and commands yourself first: `package.json` (versions, `scripts` for build/lint/test/e2e/start) and `angular.json`. No conventions file is required. A new project uses the latest stable Angular major; an existing project keeps its major unless a task says to upgrade. Use the APIs of the installed version, not older idioms from memory; when unsure, check the project's own code or the Angular docs for that version.
 
 ## Stack
 - **Angular latest stable**, **TypeScript strict** (`strict`, `noImplicitOverride`, strict templates), **SCSS**.

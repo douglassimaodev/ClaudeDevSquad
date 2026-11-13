@@ -1,6 +1,6 @@
 # dev-squad
 
-A Claude Code plugin with a six-agent dev team for .NET + Angular projects.
+A Claude Code plugin with a seven-agent dev team for .NET + Angular projects.
 
 | Agent | Model | Job |
 |---|---|---|
@@ -8,6 +8,7 @@ A Claude Code plugin with a six-agent dev team for .NET + Angular projects.
 | `backend-junior` | claude-sonnet-5-5 | Implements one backend task |
 | `frontend-senior` | claude-opus-5-5 | Plans frontend tasks, reviews frontend code, answers the junior, implements pattern-setting tasks |
 | `frontend-junior` | claude-sonnet-5-5 | Implements one frontend task |
+| `ui-designer` | claude-opus-5-5 | Writes the design direction, builds the design system (tokens, Syncfusion theme, admin shell, shared components) and pattern-setting UI |
 | `qa-backend` | sonnet | Validates backend tasks with executed evidence (read-only on code) |
 | `qa-frontend` | sonnet | Validates frontend tasks with executed evidence (read-only on code) |
 
@@ -26,8 +27,8 @@ senior (PLAN) -> T-001 todo -> junior -> in-review -> senior (REVIEW) -> changes
 
 ## Install in a project
 
-1. Publish this plugin to your marketplace (copy `plugins/dev-squad` into `devsys-claude-plugins/plugins/` and add the entry from `.claude-plugin/marketplace.json`), or add this folder as its own marketplace.
-2. In the project, merge `plugins/dev-squad/templates/settings.snippet.json` into `.claude/settings.json` (enables the plugin and sets permissions).
+1. This repository is the marketplace (`douglassimaodev/ClaudeDevSquad`, marketplace name `dev-squad-marketplace`); nothing to publish. To also offer it from another marketplace, copy `plugins/dev-squad` there.
+2. In the project, merge `plugins/dev-squad/templates/settings.snippet.json` into `.claude/settings.json` (registers the marketplace, enables `dev-squad@dev-squad-marketplace` and sets permissions).
 3. Start Claude Code and run the `dev-squad:init-projectinfo` skill. It creates and pre-fills `ProjectInfo/`. Complete `project.md`.
 4. Ask for a feature ("plan the partner approval screen"). The right agent starts automatically.
 
@@ -35,6 +36,7 @@ senior (PLAN) -> T-001 todo -> junior -> in-review -> senior (REVIEW) -> changes
 
 - `dev-squad:dotnet-mariadb-stack` — backend agents (.NET latest LTS, EF Core + MariaDB, layered architecture)
 - `dev-squad:angular-stack` — frontend agents (Angular latest stable, signals, no leaks, reusability)
+- `dev-squad:ui-design` — frontend agents and ui-designer (design direction, admin patterns, Syncfusion theming, screenshot loop)
 - `dev-squad:init-projectinfo` — scaffolds `ProjectInfo/`
 
 ## Notes

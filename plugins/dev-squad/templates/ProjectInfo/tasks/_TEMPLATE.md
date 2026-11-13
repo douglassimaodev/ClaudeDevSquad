@@ -2,7 +2,8 @@
 
 - **Status:** todo   <!-- todo | in-progress | blocked | in-review | changes-requested | in-qa | qa-failed | done -->
 - **Area:** backend   <!-- backend | frontend -->
-- **Pattern-setting:** no   <!-- yes = senior implements -->
+- **Pattern-setting:** no   <!-- yes = senior implements (ui-designer when UI: yes) -->
+- **UI:** no   <!-- yes = needs approved design.md, screenshots and the ui-design skill -->
 - **Depends on:** none   <!-- e.g. T-001 -->
 - **Created by:** backend-senior | frontend-senior
 - **Example to mirror:** <path of an existing file in the repo>

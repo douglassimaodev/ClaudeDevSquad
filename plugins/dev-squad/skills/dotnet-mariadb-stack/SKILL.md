@@ -1,15 +1,15 @@
 ---
 name: dotnet-mariadb-stack
-description: Backend stack reference for the dev-squad backend agents - .NET (latest LTS, currently 10), ASP.NET Core layered modular monolith, EF Core with Pomelo on MariaDB, ASP.NET Core Identity + JWT, FluentValidation, xUnit/NSubstitute/FluentAssertions. Load before planning, implementing, reviewing or testing backend work. ProjectInfo/ overrides anything here.
+description: Backend stack reference for the dev-squad backend agents - .NET (latest LTS, currently 10), ASP.NET Core layered modular monolith, EF Core with Oracle MySql.EntityFrameworkCore on MariaDB, ASP.NET Core Identity + JWT, FluentValidation, xUnit/NSubstitute/FluentAssertions. Load before planning, implementing, reviewing or testing backend work. ProjectInfo/ overrides anything here.
 ---
 
 # Backend stack: .NET + MariaDB
 
-Defaults derived from a reference project (TradesApp). **If `ProjectInfo/conventions-backend.md` or `architecture.md` says otherwise, the project wins.** Detect real versions from the `.csproj` files before relying on anything below.
+Defaults derived from a reference project (TradesApp). **If `ProjectInfo/conventions-backend.md` or `architecture.md` says otherwise, the project wins.** Detect real versions and commands yourself before relying on anything below: target framework and package versions from the `.csproj` files, the solution file for `dotnet build`/`dotnet test`, `launchSettings.json` for the run URL. No conventions file is required.
 
 ## Stack
 - **.NET latest LTS** (currently .NET 10; an existing project keeps the target framework in its csproj - never upgrade or downgrade it without a task), ASP.NET Core controllers (`[ApiController]`), `Nullable` and `ImplicitUsings` enabled.
-- **EF Core** with **Pomelo.EntityFrameworkCore.MySql** against **MariaDB** (11.x). Pomelo lags new EF Core majors (e.g. Pomelo 9.x supports EF Core 9.x even on .NET 10): choose the EF Core major that the latest stable Pomelo supports, keep `Microsoft.EntityFrameworkCore*` packages on that same major, and check NuGet before bumping either. A mismatch is a finding, not something to fix silently.
+- **EF Core** (latest major matching the .NET LTS, e.g. EF Core 10 on .NET 10) with Oracle's **`MySql.EntityFrameworkCore`** (10.0.x for EF Core 10) against **MariaDB** (11.x). Registration is `options.UseMySQL(connectionString)` (capital `SQL`; no `ServerVersion` argument, unlike Pomelo's `UseMySql`). The provider officially targets MySQL, so **MariaDB compatibility must be verified, not assumed**: apply each migration to a scratch MariaDB database and exercise the feature (JSON columns, collations, GUID keys, concurrency tokens, date/time precision) before relying on it, and report any provider limitation to the senior. Keep all provider-specific code (`UseMySQL`, provider-specific column types) inside Infrastructure so the provider can be swapped (`Microting.EntityFrameworkCore.MySql` or `Pomelo.EntityFrameworkCore.MySql`, which use `UseMySql`) without touching other layers. An existing project already on another provider keeps it unless a task migrates it. Keep every `Microsoft.EntityFrameworkCore*` package on one major supported by the provider, pin exact versions (no wildcards), and check NuGet for the newest stable before choosing. A provider/EF major mismatch is a finding, not something to fix silently.
 - **ASP.NET Core Identity** (`UserManager`) for users, password hashing, lockout, email-confirmation and reset tokens. JWT issuance and policy/role authorization sit on top of it. Never hand-roll hashing, credential storage or those tokens.
 - **FluentValidation** for all validation. Swashbuckle for OpenAPI, Serilog for logging.
 - **Tests:** xUnit + NSubstitute + FluentAssertions.
@@ -42,7 +42,7 @@ Where new code goes: DB query/command -> repository in Infrastructure; business 
 - Case-insensitive default collation: do not assume case-sensitive comparisons.
 - Dates are UTC; be explicit about `DateTime` kind.
 - Concurrency: use a concurrency token/row version where two actors can change the same row (status transitions, quotes, bookings).
-- **Migrations:** `dotnet ef migrations add <Name>` (design-time factory pins the MariaDB server version); review the generated SQL/snapshot; never edit applied migrations; never run `database update`/`drop` against shared databases without the user's approval. A task that changes the model must include its migration.
+- **Migrations:** `dotnet ef migrations add <Name>` (a design-time `IDesignTimeDbContextFactory` supplies the connection string); review the generated SQL/snapshot; never edit applied migrations; never run `database update`/`drop` against shared databases without the user's approval. A task that changes the model must include its migration.
 - Connection string `DefaultConnection`; secrets (`Jwt:Secret`, connection strings, API keys) come from environment/user-secrets in real environments, never from committed files.
 
 ## Testing rules

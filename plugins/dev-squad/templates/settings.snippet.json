@@ -1,11 +1,14 @@
 {
   "extraKnownMarketplaces": {
-    "devsys": {
-      "source": { "source": "github", "repo": "douglassimaodev/devsys-claude-plugins" }
+    "dev-squad-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "douglassimaodev/ClaudeDevSquad"
+      }
     }
   },
   "enabledPlugins": {
-    "dev-squad@devsys": true
+    "dev-squad@dev-squad-marketplace": true
   },
   "permissions": {
     "allow": [

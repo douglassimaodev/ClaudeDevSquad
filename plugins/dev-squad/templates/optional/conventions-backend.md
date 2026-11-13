@@ -1,7 +1,7 @@
 # Backend conventions (.NET)
 
-- **Stack (defaults, see skill `dev-squad:dotnet-mariadb-stack`):** .NET latest LTS (currently 10), ASP.NET Core, EF Core + Pomelo on MariaDB, Identity + JWT, FluentValidation, xUnit/NSubstitute/FluentAssertions. Override here if different.
-- **Versions:** <exact .NET, EF Core, Pomelo, MariaDB versions>
+- **Stack (defaults, see skill `dev-squad:dotnet-mariadb-stack`):** .NET latest LTS (currently 10), ASP.NET Core, EF Core + Oracle MySql.EntityFrameworkCore on MariaDB, Identity + JWT, FluentValidation, xUnit/NSubstitute/FluentAssertions. Override here if different.
+- **Versions:** <exact .NET, EF Core, MySQL provider, MariaDB versions>
 - **Structure & naming:** <controller/endpoint style, use cases/handlers, DTOs, validators>
 - **Error handling & responses:** <ProblemDetails, error codes>
 - **Security:** <auth scheme, roles/policies, ownership checks, secrets handling>
