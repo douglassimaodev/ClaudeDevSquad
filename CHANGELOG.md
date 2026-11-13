@@ -4,6 +4,11 @@ All notable changes to the `dev-squad` plugin. Write notes under **Unreleased** 
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-11-13
+
+### Added
+- `dotnet-mariadb-stack`: Identity tables are never modified; extra user data goes in an `AppUser` table sharing the Identity user Id (stack rule + review/QA checklist line).
+
 ## [0.2.1] - 2026-11-13
 
 ### Changed
