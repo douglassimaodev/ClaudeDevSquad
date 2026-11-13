@@ -2,6 +2,7 @@
 
 - **Status:** todo   <!-- todo | in-progress | blocked | in-review | changes-requested | in-qa | qa-failed | done -->
 - **Area:** backend   <!-- backend | frontend -->
+- **Milestone:** M1.1   <!-- the MILESTONES.md item this task belongs to -->
 - **Pattern-setting:** no   <!-- yes = senior implements (ui-designer when UI: yes) -->
 - **UI:** no   <!-- yes = needs approved design.md, screenshots and the ui-design skill -->
 - **Depends on:** none   <!-- e.g. T-001 -->
@@ -13,6 +14,9 @@
 
 ## Files to touch
 - <path> — <what changes>
+
+## Docs to update
+- <project docs this task must keep current, e.g. docs/API.md section, release notes; "none" if none>
 
 ## Contract  <!-- backend tasks define it; frontend tasks reference it -->
 <Route, verb, request, response, status/error codes. "n/a" if none.>

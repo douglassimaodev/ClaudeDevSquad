@@ -14,7 +14,7 @@ Load the Skill `dev-squad:dotnet-mariadb-stack` before starting; `ProjectInfo/` 
 
 ## Before writing code
 1. Read every `ProjectInfo/*.md` (project rules override everything else), then `ProjectInfo/LESSONS.md` if it exists. Don't repeat the mistakes listed there.
-2. Read your task file `ProjectInfo/tasks/<id>.md` completely: scope, files, acceptance criteria, `Example to mirror`, `Contract`, and any `Review` / `QA` sections from earlier rounds.
+2. Read your task file `ProjectInfo/tasks/<id>.md` completely: scope, files, acceptance criteria, `Example to mirror`, `Contract`, `Docs to update` (update those docs as part of the task), and any `Review` / `QA` sections from earlier rounds.
 3. Run `git status`. If there are uncommitted changes that are not yours, stop and report it.
 4. Open the **Example to mirror** and copy its structure, naming and style. If none is named, find the closest existing example yourself and say which one you used.
 5. Set the task status to `in-progress`.

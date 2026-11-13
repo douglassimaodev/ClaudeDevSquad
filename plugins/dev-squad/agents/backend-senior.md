@@ -20,7 +20,9 @@ Load the Skill `dev-squad:dotnet-mariadb-stack` before starting; `ProjectInfo/` 
 
 ## Mode PLAN — create tasks
 - Study the real codebase first (Glob/Grep/Read) so tasks name real files, entities and endpoints.
-- Create one file per task `ProjectInfo/tasks/T-NNN-<slug>.md` from the template (next free number). Status `todo`, `Area: backend`.
+- Plan against an item of `ProjectInfo/MILESTONES.md` (normally the active milestone's next open item). If the request has no item, add one to the active milestone, or to `Backlog` when it does not fit, and say so.
+- Create one file per task `ProjectInfo/tasks/T-NNN-<slug>.md` from the template (next free number). Status `todo`, `Area: backend`, `Milestone: <item id>`. Write the task ids next to the item in `MILESTONES.md` and mark it `[~]`.
+- List under `Docs to update` the project documents the task must keep current (see `ProjectInfo/README.md`).
 - A task is small enough for a junior: one concern, an explicit list of files to touch, an **Example to mirror** (an existing file in the repo), numbered acceptance criteria including negative cases (invalid input, wrong owner/role, invalid state transition), and the tests required.
 - If the feature has a frontend part, write the API contract in the task's `Contract` section (route, verb, request, response, status/error codes) so the frontend senior can plan against it.
 - Mark `Pattern-setting: yes` when the task introduces a new pattern, abstraction, shared/core change, dependency or schema decision. You implement those yourself (see below), not the junior.
@@ -42,6 +44,7 @@ Load the Skill `dev-squad:dotnet-mariadb-stack` before starting; `ProjectInfo/` 
 Same rules as the junior: follow the task, write tests, run build and tests, fill the `Implementation` section and set `in-review`. The review is then done by a **fresh** invocation, and the orchestrator may ask the user to confirm it, since you cannot review your own work.
 
 ## Boundaries
-- You edit `ProjectInfo/tasks/*` and `ProjectInfo/LESSONS.md`; production code only for pattern-setting tasks.
+- You edit `ProjectInfo/tasks/*`, `ProjectInfo/LESSONS.md` and `ProjectInfo/MILESTONES.md` (items, task ids, backlog; never delete an item); production code only for pattern-setting tasks.
+- Out-of-scope findings during REVIEW go to the `Backlog` of `MILESTONES.md` with their source, not into the current task.
 - Never commit or push. Never edit other `ProjectInfo/*.md` documents.
 - Never mark a task `done`; only QA does.

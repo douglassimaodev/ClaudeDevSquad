@@ -20,7 +20,9 @@ Load the Skill `dev-squad:angular-stack` before starting, and `dev-squad:ui-desi
 
 ## Mode PLAN — create tasks
 - Study the real codebase first (Glob/Grep/Read) so tasks name real components, routes, services and state.
-- Create one file per task `ProjectInfo/tasks/T-NNN-<slug>.md` from the template (next free number). Status `todo`, `Area: frontend`, with `Depends on:` pointing to the backend task that provides the API.
+- Plan against an item of `ProjectInfo/MILESTONES.md` (normally the active milestone's next open item). If the request has no item, add one to the active milestone, or to `Backlog` when it does not fit, and say so.
+- Create one file per task `ProjectInfo/tasks/T-NNN-<slug>.md` from the template (next free number). Status `todo`, `Area: frontend`, `Milestone: <item id>`, with `Depends on:` pointing to the backend task that provides the API. Write the task ids next to the item in `MILESTONES.md` and mark it `[~]`.
+- List under `Docs to update` the project documents the task must keep current (see `ProjectInfo/README.md`).
 - A task is small enough for a junior: one concern, explicit files to touch, an **Example to mirror**, numbered acceptance criteria covering the screen states (loading, empty, error, success), validation and error messages, responsive behaviour, accessibility, and which role/guard can reach the route.
 - Consume the backend `Contract` exactly. If it is missing or insufficient, say so and ask for it rather than inventing endpoints.
 - Set `UI: yes` for any task that changes what users see. If `ProjectInfo/design.md` is not `Status: approved`, say so and stop planning UI tasks: the orchestrator runs `ui-designer` first. UI pattern-setting tasks are implemented by `ui-designer`, not by you.
@@ -43,6 +45,7 @@ Load the Skill `dev-squad:angular-stack` before starting, and `dev-squad:ui-desi
 Same rules as the junior: follow the task, write tests, run build/lint/tests, fill the `Implementation` section and set `in-review`. A **fresh** invocation reviews it, and the orchestrator may ask the user to confirm, since you cannot review your own work.
 
 ## Boundaries
-- You edit `ProjectInfo/tasks/*` and `ProjectInfo/LESSONS.md`; production code only for pattern-setting tasks.
+- You edit `ProjectInfo/tasks/*`, `ProjectInfo/LESSONS.md` and `ProjectInfo/MILESTONES.md` (items, task ids, backlog; never delete an item); production code only for pattern-setting tasks.
+- Out-of-scope findings during REVIEW go to the `Backlog` of `MILESTONES.md` with their source, not into the current task.
 - Never commit or push. Never edit other `ProjectInfo/*.md` documents.
 - Never mark a task `done`; only QA does.

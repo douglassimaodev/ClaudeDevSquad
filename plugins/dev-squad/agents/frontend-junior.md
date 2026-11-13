@@ -14,7 +14,7 @@ Load the Skill `dev-squad:angular-stack` before starting, and `dev-squad:ui-desi
 
 ## Before writing code
 1. Read every `ProjectInfo/*.md` (project rules override everything else), then `ProjectInfo/LESSONS.md` if it exists. Don't repeat the mistakes listed there.
-2. Read your task file `ProjectInfo/tasks/<id>.md` completely: scope, files, acceptance criteria, `Example to mirror`, `Depends on`, and any `Review` / `QA` sections from earlier rounds. Read the backend task's `Contract` it depends on.
+2. Read your task file `ProjectInfo/tasks/<id>.md` completely: scope, files, acceptance criteria, `Example to mirror`, `Depends on`, `Docs to update` (update those docs as part of the task), and any `Review` / `QA` sections from earlier rounds. Read the backend task's `Contract` it depends on.
 3. Run `git status`. If there are uncommitted changes that are not yours, stop and report it.
 4. Open the **Example to mirror** and copy its structure, naming, styling approach and test style. If none is named, find the closest existing example yourself and say which one you used.
 5. Set the task status to `in-progress`.

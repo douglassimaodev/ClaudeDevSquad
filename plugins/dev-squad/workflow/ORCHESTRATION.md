@@ -4,7 +4,7 @@ This project has a six-agent team. Subagents cannot call each other, so **this c
 
 ## Project knowledge: `ProjectInfo/`
 
-Every agent reads `ProjectInfo/*.md` first (project, architecture, glossary...). Stack conventions (.NET + MariaDB, Angular) come from the plugin skills; `ProjectInfo/conventions-*.md` is an optional override. Agents detect versions and build/test commands from the code when ProjectInfo does not state them. Project rules there always win over agent defaults. If `ProjectInfo/` does not exist, run the `dev-squad:init-projectinfo` skill and ask the user to fill it in before any agent works. Never invent its contents.
+Every agent reads `ProjectInfo/*.md` first (project, architecture, milestones, glossary...), and the other project documents listed in `ProjectInfo/README.md` when a task touches their subject. Stack conventions (.NET + MariaDB, Angular) come from the plugin skills; `ProjectInfo/conventions-*.md` is an optional override. Agents detect versions and build/test commands from the code when ProjectInfo does not state them. Project rules there always win over agent defaults. If `ProjectInfo/` does not exist, run the `dev-squad:init-projectinfo` skill and ask the user to fill it in before any agent works. Never invent its contents.
 
 ## Session start: resume first
 
@@ -18,7 +18,7 @@ Work can stop at any moment (closed terminal, lost connection, used-up credits).
    - `in-review` -> start a fresh senior REVIEW. `changes-requested` / `qa-failed` -> the implementer, with the open numbered items.
    - `in-qa` -> start the QA agent (it drops any leftover `_qa_` database for that task first).
    - `blocked` -> show the open question; answer it via the senior (ANSWER) or ask the user.
-5. If nothing is open, say so in one line and handle the user's message.
+5. If nothing is open, read `ProjectInfo/MILESTONES.md` and say in one line where the plan stands (`M3 active: M3.1-M3.2 done, next M3.3 — Checkout, not planned yet`), then handle the user's message.
 
 If the conversation is getting long, finish the current step, make sure the task file is up to date, and tell the user to continue in a new session: it will resume from the task files.
 
@@ -39,6 +39,8 @@ If the conversation is getting long, finish the current step, make sure the task
 | User intent | Start |
 |---|---|
 | New feature / story / "plan", "break down", "create tasks" | Backend part -> `backend-senior` (PLAN); UI part -> `frontend-senior` (PLAN). For full-stack work run `backend-senior` first so the API contract exists, then `frontend-senior`. |
+| "Continue", "next", "carry on with the milestone" | The first open item of the active milestone in `MILESTONES.md`: its open tasks go through the loop; if it has no tasks yet, the matching senior PLANs it. |
+| New milestone / "plan milestone M4" | The seniors PLAN the milestone's items (backend first); the user confirms the milestone goal and items before tasks are created. |
 | Implement / fix a task, "work on T-012" | The task's `Area` decides: `backend` -> `backend-junior`, `frontend` -> `frontend-junior` |
 | Review a task / "review T-012" | `backend-senior` or `frontend-senior` (REVIEW) |
 | Look and feel, design direction, theme, design system, style guide, "make it look better" | `ui-designer` (DESIGN DIRECTION) |
@@ -46,6 +48,14 @@ If the conversation is getting long, finish the current step, make sure the task
 | Unclear | Ask the user. Do not guess. |
 
 Small requests that do not need a task (a question, a one-line fix the user dictated) can be handled directly. Anything that changes behaviour goes through a task.
+
+## Milestones (`ProjectInfo/MILESTONES.md`)
+
+The plan has three levels: **milestone** (`M3`, one goal, one `active` at a time) -> **item** (`M3.2`, one feature or story) -> **tasks** (`T-NNN`, what the team implements). Format and rules are at the top of that file.
+
+- A senior PLAN always targets an item. If the user's request has no item yet, the senior adds it to the active milestone (or to `Backlog` if it does not belong there) and says so. Each task file names its item in `Milestone:`, and the item lists its task ids.
+- When the last task of an item is `done`, the orchestrator ticks the item `[x]`. When every item except `QG` is `[x]`, the senior plans the quality-gate task (full build and suites, docs, release notes, security and ownership review); when that is `done`, the milestone becomes `done` and the next one `active` after the user confirms.
+- Follow-ups found in review or QA that are out of the task's scope go to `Backlog` with their source, never silently into the current task.
 
 ## Task lifecycle (`ProjectInfo/tasks/T-NNN-<slug>.md`, format in `_TEMPLATE.md`)
 
@@ -73,7 +83,7 @@ Orchestrator loop for each task:
 
    <one or two lines on what changed and why>
    ```
-   `type` is feat / fix / refactor / test / chore. Never run `git add` or `git commit` yourself; the user commits each task when they choose. Then continue with the next `todo` task if the user asked for a whole feature.
+   `type` is feat / fix / refactor / test / chore. Never run `git add` or `git commit` yourself; the user commits each task when they choose. Tick the item in `MILESTONES.md` if this was its last task. Then continue with the next `todo` task if the user asked for a whole feature or milestone.
 6. Stop and ask the user on: a 3rd review round for one task, QA `BLOCKED`, `ESCALATE`, a business decision, or a red build outside the task.
 
 Show the user one short line per step (e.g. `T-012 round 2: backend-senior requested 3 changes`) and each QA verdict in full.
@@ -92,7 +102,7 @@ A feature spans two tasks, one per area, linked with `Depends on:`. The backend 
 
 - **Never `git commit` or `git push`** unless the user explicitly asks in the current conversation. Report changed files and a suggested commit message instead.
 - QA backend creates its own scratch database per task (`<project>_qa_<taskid>` on localhost, login root/root, see the `dotnet-mariadb-stack` skill) and drops it afterwards. No agent touches any other database without the user's approval.
-- Do not edit `ProjectInfo/*.md` project documents (only `ProjectInfo/tasks/*` and, for seniors, `ProjectInfo/LESSONS.md`). If a project doc is wrong or missing, say so.
+- Do not edit `ProjectInfo/*.md` project documents (only `ProjectInfo/tasks/*`, and for seniors `ProjectInfo/LESSONS.md` and `ProjectInfo/MILESTONES.md`; the orchestrator ticks `MILESTONES.md`). If a project doc is wrong or missing, say so. Docs outside `ProjectInfo/` (API reference, release notes...) are updated by the task that lists them under `Docs to update`.
 - Lessons: when review or QA finds a repeatable mistake, the senior appends one rule to `ProjectInfo/LESSONS.md`. Juniors read it before every task.
-- **Promote stack lessons to the plugin:** when a feature is finished (or the user stops), list the `Scope: stack` lessons that are not `Promoted` yet and offer to add them to the plugin. If the user agrees and the plugin repository is available locally (ask for its path, e.g. `C:devClaudeAgent`), add each as one checklist line in the matching skill (`dotnet-mariadb-stack`, `angular-stack` or `ui-design`), then mark the lesson `Promoted: <next plugin version>` here. Never push the plugin repository; the user reviews and commits it, and the version bumps itself on commit.
+- **Promote stack lessons to the plugin:** when a feature is finished (or the user stops), list the `Scope: stack` lessons that are not `Promoted` yet and offer to add them to the plugin. If the user agrees and the plugin repository is available locally (ask for its path, e.g. `C:\dev\ClaudeAgent`), add each as one checklist line in the matching skill (`dotnet-mariadb-stack`, `angular-stack` or `ui-design`), then mark the lesson `Promoted: <next plugin version>` here. Never push the plugin repository; the user reviews and commits it, and the version bumps itself on commit.
 - Every response from this conversation begins with `[ACTIVE_AGENT: <agent name or ORCHESTRATOR>]`.

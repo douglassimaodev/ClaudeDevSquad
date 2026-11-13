@@ -4,6 +4,17 @@ All notable changes to the `dev-squad` plugin. Write notes under **Unreleased** 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-13
+
+### Added
+- Milestones: `ProjectInfo/MILESTONES.md` (milestone -> item -> tasks, quality gate per milestone, backlog). Seniors plan against an item and write the task ids there; the orchestrator ticks items and reports where the plan stands on resume; "continue" picks the next open item.
+- Task template: `Milestone:` and `Docs to update` fields; juniors update the listed docs.
+- `ProjectInfo/README.md`: *Other project documents* table for docs that live outside `ProjectInfo/`.
+- `init-projectinfo`: migration step for projects coming from another workflow (plan, work in flight, lessons, decisions, settings).
+
+### Fixed
+- Plugin repository path example in ORCHESTRATION.md (`C:\dev\ClaudeAgent`).
+
 ## [0.2.2] - 2026-11-13
 
 ### Added
