@@ -4,7 +4,8 @@
       "source": {
         "source": "github",
         "repo": "douglassimaodev/ClaudeDevSquad"
-      }
+      },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {

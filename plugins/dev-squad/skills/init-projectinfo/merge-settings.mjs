@@ -26,9 +26,18 @@ if (fs.existsSync(settingsPath)) {
 const added = [];
 settings.extraKnownMarketplaces ??= {};
 for (const [name, value] of Object.entries(snippet.extraKnownMarketplaces)) {
-  if (!settings.extraKnownMarketplaces[name]) {
+  const current = settings.extraKnownMarketplaces[name];
+  if (!current) {
     settings.extraKnownMarketplaces[name] = value;
     added.push(`marketplace ${name}`);
+    continue;
+  }
+  // Existing entry: add missing keys (e.g. autoUpdate), never change ones the project set.
+  for (const [key, v] of Object.entries(value)) {
+    if (!(key in current)) {
+      current[key] = v;
+      added.push(`marketplace ${name}: ${key}`);
+    }
   }
 }
 settings.enabledPlugins ??= {};

@@ -4,6 +4,11 @@ All notable changes to the `dev-squad` plugin. Write notes under **Unreleased** 
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-13
+
+### Added
+- Settings snippet sets `autoUpdate: true` on `dev-squad-marketplace`, so Claude Code refreshes the plugin at every startup. `merge-settings.mjs` now adds missing keys to an existing marketplace entry (never changes keys the project set).
+
 ## [0.3.1] - 2026-11-13
 
 ### Added
