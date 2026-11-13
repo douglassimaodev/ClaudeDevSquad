@@ -23,7 +23,7 @@ senior (PLAN) -> T-001 todo -> junior -> in-review -> senior (REVIEW) -> changes
 - All agents read `ProjectInfo/*.md` first; those files override the plugin's defaults.
 - Tasks live in `ProjectInfo/tasks/T-NNN-slug.md` of the project using the plugin, never in the plugin.
 - Full-stack features become two tasks linked by `Depends on`; the backend task carries the API `Contract`.
-- Nothing is committed unless you ask. A third review round, a blocked QA, or a business decision stops the loop and asks you.
+- Nothing is committed unless you ask, or set `Auto-commit: yes` in `ProjectInfo/project.md` so each task is committed when QA approves it (never pushed). A third review round, a blocked QA, or a business decision stops the loop and asks you.
 
 ## Install in a project
 

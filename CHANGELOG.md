@@ -4,6 +4,11 @@ All notable changes to the `dev-squad` plugin. Write notes under **Unreleased** 
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-13
+
+### Added
+- Opt-in `Auto-commit: yes` (*Workflow settings* in `ProjectInfo/project.md`): when QA approves a task, the orchestrator commits that task's files by path with the suggested message. It never pushes and never uses `--no-verify`. `init-projectinfo` asks for it and moves `git add`/`git commit` to `allow` when enabled.
+
 ## [0.3.0] - 2026-11-13
 
 ### Added

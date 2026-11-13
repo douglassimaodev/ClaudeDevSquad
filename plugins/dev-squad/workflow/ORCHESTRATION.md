@@ -83,7 +83,11 @@ Orchestrator loop for each task:
 
    <one or two lines on what changed and why>
    ```
-   `type` is feat / fix / refactor / test / chore. Never run `git add` or `git commit` yourself; the user commits each task when they choose. Tick the item in `MILESTONES.md` if this was its last task. Then continue with the next `todo` task if the user asked for a whole feature or milestone.
+   `type` is feat / fix / refactor / test / chore. Tick the item in `MILESTONES.md` if this was its last task. Then commit or hand over:
+   - `Auto-commit: yes` in `ProjectInfo/project.md` (*Workflow settings*) -> commit the task yourself: make sure the task file says `done` with its sections complete, then `git add` exactly the suggested files plus the task file and `MILESTONES.md` (if ticked) by path (never `git add -A` or `.`), and `git commit` with the suggested message. If files outside this task are already staged, or a hook fails, stop and show the user; never use `--no-verify`. Show the commit hash in the summary line. Never push.
+   - Otherwise (missing or `no`) -> never run `git add` or `git commit`; the user commits each task when they choose.
+
+   Then continue with the next `todo` task if the user asked for a whole feature or milestone.
 6. Stop and ask the user on: a 3rd review round for one task, QA `BLOCKED`, `ESCALATE`, a business decision, or a red build outside the task.
 
 Show the user one short line per step (e.g. `T-012 round 2: backend-senior requested 3 changes`) and each QA verdict in full.
@@ -100,7 +104,7 @@ A feature spans two tasks, one per area, linked with `Depends on:`. The backend 
 
 ## Rules for everyone
 
-- **Never `git commit` or `git push`** unless the user explicitly asks in the current conversation. Report changed files and a suggested commit message instead.
+- **Never `git commit` or `git push`** unless the user explicitly asks in the current conversation. Report changed files and a suggested commit message instead. The one exception is the orchestrator's per-task commit when `Auto-commit: yes` (step 5 above); subagents never commit, and nobody pushes.
 - QA backend creates its own scratch database per task (`<project>_qa_<taskid>` on localhost, login root/root, see the `dotnet-mariadb-stack` skill) and drops it afterwards. No agent touches any other database without the user's approval.
 - Do not edit `ProjectInfo/*.md` project documents (only `ProjectInfo/tasks/*`, and for seniors `ProjectInfo/LESSONS.md` and `ProjectInfo/MILESTONES.md`; the orchestrator ticks `MILESTONES.md`). If a project doc is wrong or missing, say so. Docs outside `ProjectInfo/` (API reference, release notes...) are updated by the task that lists them under `Docs to update`.
 - Lessons: when review or QA finds a repeatable mistake, the senior appends one rule to `ProjectInfo/LESSONS.md`. Juniors read it before every task.

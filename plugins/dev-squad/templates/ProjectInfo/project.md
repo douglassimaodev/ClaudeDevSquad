@@ -15,3 +15,6 @@
 
 ## Out of scope for now
 - <list>
+
+## Workflow settings
+- **Auto-commit:** no   <!-- yes: the orchestrator commits each task when QA approves it (never pushes). Also move `Bash(git add:*)` and `Bash(git commit:*)` from `ask` to `allow` in .claude/settings.json, or every commit asks first. -->
