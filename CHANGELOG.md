@@ -4,6 +4,11 @@ All notable changes to the `dev-squad` plugin. Write notes under **Unreleased** 
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-13
+
+### Changed
+- QA scratch database login is now `root`/`root` (was `localhost`/`localhost`); no one-time user setup needed. Agents still only create/drop `_qa_` databases.
+
 ## [0.2.0] - 2026-11-13
 
 ### Added

@@ -53,14 +53,14 @@ Where new code goes: DB query/command -> repository in Infrastructure; business 
 
 ## QA test database (scratch, per task)
 QA verifies migrations and data behaviour on a **brand-new database it creates and drops itself**, never on the developer's or any shared database.
-- **Server and login (always):** `localhost`, port 3306, user `localhost`, password `localhost`. That user is granted rights only on databases matching `%_qa_%`, so it cannot touch anything else.
+- **Server and login (always):** `localhost`, port 3306, user `root`, password `root`. root can touch every database, so the safety rule is ours to keep: only ever create, migrate or drop databases whose name contains `_qa_`.
 - **Name:** `<project>_qa_<taskid>` in lowercase, e.g. `demoapp_qa_t003`. Must contain `_qa_`.
-- **Connection string:** `Server=localhost;Port=3306;Database=<name>;User ID=localhost;Password=localhost;`
+- **Connection string:** `Server=localhost;Port=3306;Database=<name>;User ID=root;Password=root;`
 - **Create + migrate:** run `dotnet ef database update --connection "<connection string>"` from the backend folder, with `--project`/`--startup-project` as the solution needs. EF creates the database if it does not exist and applies every migration from zero, which also proves the migrations work on a clean MariaDB.
 - **Run the API against it:** set the environment variable `ConnectionStrings__DefaultConnection` to that connection string for the `dotnet run` process (never edit `appsettings*.json`).
 - **Integration tests**, if the project has them, use the same connection string via the same variable.
-- **Clean up** when QA finishes (pass or fail): `DROP DATABASE IF EXISTS <name>;` with the MariaDB client (`mariadb` on PATH, or `C:/Program Files/MariaDB */bin/mariadb.exe`) using `-hlocalhost -ulocalhost -plocalhost`. Only ever drop names containing `_qa_`.
-- If the login fails, report `BLOCKED` with the error and the setup SQL from the plugin README; do not try other credentials.
+- **Clean up** when QA finishes (pass or fail): `DROP DATABASE IF EXISTS <name>;` with the MariaDB client (`mariadb` on PATH, or `C:/Program Files/MariaDB */bin/mariadb.exe`) using `-hlocalhost -uroot -proot`. Only ever drop names containing `_qa_`.
+- If the login fails, report `BLOCKED` with the error; do not try other credentials.
 - Developers and seniors who need a real database for a task use the same convention (a `_qa_` name, created and dropped the same way).
 
 ## Testing rules

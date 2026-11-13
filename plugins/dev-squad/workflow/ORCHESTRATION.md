@@ -91,7 +91,7 @@ A feature spans two tasks, one per area, linked with `Depends on:`. The backend 
 ## Rules for everyone
 
 - **Never `git commit` or `git push`** unless the user explicitly asks in the current conversation. Report changed files and a suggested commit message instead.
-- QA backend creates its own scratch database per task (`<project>_qa_<taskid>` on localhost, login localhost/localhost, see the `dotnet-mariadb-stack` skill) and drops it afterwards. No agent touches any other database without the user's approval.
+- QA backend creates its own scratch database per task (`<project>_qa_<taskid>` on localhost, login root/root, see the `dotnet-mariadb-stack` skill) and drops it afterwards. No agent touches any other database without the user's approval.
 - Do not edit `ProjectInfo/*.md` project documents (only `ProjectInfo/tasks/*` and, for seniors, `ProjectInfo/LESSONS.md`). If a project doc is wrong or missing, say so.
 - Lessons: when review or QA finds a repeatable mistake, the senior appends one rule to `ProjectInfo/LESSONS.md`. Juniors read it before every task.
 - **Promote stack lessons to the plugin:** when a feature is finished (or the user stops), list the `Scope: stack` lessons that are not `Promoted` yet and offer to add them to the plugin. If the user agrees and the plugin repository is available locally (ask for its path, e.g. `C:devClaudeAgent`), add each as one checklist line in the matching skill (`dotnet-mariadb-stack`, `angular-stack` or `ui-design`), then mark the lesson `Promoted: <next plugin version>` here. Never push the plugin repository; the user reviews and commits it, and the version bumps itself on commit.

@@ -1,6 +1,6 @@
 {
   "name": "dev-squad",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Six-agent dev team: backend/frontend junior, senior/tech lead and QA. Tasks flow through ProjectInfo/tasks: senior plans -> junior implements -> senior reviews -> QA validates.",
   "author": { "name": "devsys" }
 }

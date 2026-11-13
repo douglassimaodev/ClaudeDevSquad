@@ -32,15 +32,9 @@ senior (PLAN) -> T-001 todo -> junior -> in-review -> senior (REVIEW) -> changes
 3. Start Claude Code and run the `dev-squad:init-projectinfo` skill. It creates and pre-fills `ProjectInfo/`, merges the permissions into `.claude/settings.json` and checks the QA database login. Complete `project.md`.
 4. Ask for a feature ("plan the partner approval screen"). The right agent starts automatically.
 
-## QA test database (one-time setup per machine)
+## QA test database
 
-`qa-backend` creates a fresh MariaDB database per task (`<project>_qa_<taskid>`), applies all migrations, tests against it and drops it. It always connects to `localhost:3306` as user `localhost` / password `localhost`, which may only touch databases whose name contains `_qa_`. Create that login once, as root:
-
-```sql
-CREATE USER IF NOT EXISTS 'localhost'@'localhost' IDENTIFIED BY 'localhost';
-GRANT ALL PRIVILEGES ON `%_qa_%`.* TO 'localhost'@'localhost';
-FLUSH PRIVILEGES;
-```
+`qa-backend` creates a fresh MariaDB database per task (`<project>_qa_<taskid>`), applies all migrations, tests against it and drops it. It always connects to `localhost:3306` as user `root` / password `root` and only ever touches databases whose name contains `_qa_`. No setup is needed beyond a running MariaDB with that login.
 
 ## Maintaining the plugin
 

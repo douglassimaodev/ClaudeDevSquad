@@ -1,13 +1,9 @@
 #!/usr/bin/env node
-// Checks that the QA scratch-database login (localhost / localhost on localhost:3306) works
+// Checks that the QA scratch-database login (root / root on localhost:3306) works
 // and may create and drop a `_qa_` database. Prints the setup SQL when it does not.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-
-const SETUP_SQL = `CREATE USER IF NOT EXISTS 'localhost'@'localhost' IDENTIFIED BY 'localhost';
-GRANT ALL PRIVILEGES ON \`%\\_qa\\_%\`.* TO 'localhost'@'localhost';
-FLUSH PRIVILEGES;`;
 
 function findClient() {
   for (const name of ['mariadb', 'mysql']) {
@@ -34,13 +30,13 @@ if (!client) {
 }
 
 const db = 'devsquad_qa_check';
-const run = (sql) => execFileSync(client, ['-hlocalhost', '-P3306', '-ulocalhost', '-plocalhost', '-e', sql], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+const run = (sql) => execFileSync(client, ['-hlocalhost', '-P3306', '-uroot', '-proot', '-e', sql], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 try {
   run(`CREATE DATABASE IF NOT EXISTS ${db}; DROP DATABASE ${db};`);
-  console.log(`QA DB CHECK: OK (client: ${client}). The localhost/localhost login can create and drop _qa_ databases.`);
+  console.log(`QA DB CHECK: OK (client: ${client}). The root/root login can create and drop _qa_ databases.`);
 } catch (e) {
   const msg = (e.stderr || e.message || '').toString().trim().split('\n')[0];
   console.log(`QA DB CHECK: FAILED (client: ${client}): ${msg}`);
-  console.log('Ask the user to run this once as root, then re-run the check:\n' + SETUP_SQL);
+  console.log('Ask the user to check that MariaDB is running on localhost:3306 and that root/root is valid, then re-run the check.');
   process.exit(1);
 }
