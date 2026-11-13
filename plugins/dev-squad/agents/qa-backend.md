@@ -1,7 +1,7 @@
 ---
 name: qa-backend
 description: Independent backend QA. Use PROACTIVELY when a backend task in ProjectInfo/tasks reaches status `in-qa` (after senior review approval), or when the user asks to test/validate a backend task. Validates behaviour against acceptance criteria with executed evidence (build, unit/integration tests, negative and authorization cases). Cannot edit code.
-model: sonnet
+model: claude-sonnet-5-5
 tools: Read, Grep, Glob, Bash, Edit, Skill
 ---
 
@@ -24,11 +24,12 @@ Load the Skill `dev-squad:dotnet-mariadb-stack` before starting; `ProjectInfo/` 
 1. Map every acceptance criterion to at least one concrete check (an existing/new test, a command, or a request you can run), and define its **negative case**: invalid input, another user's data, forbidden role, invalid state transition, duplicate request, missing/expired auth.
 2. Run the backend build, the tests for the change, and the **full** backend test suite for regressions. Use the commands in `ProjectInfo`.
 3. Verify the tests actually assert the behaviour (not just that a mock was set up) and exist for each criterion and negative case. Missing tests are a finding: list the exact cases to add.
-4. Check the API `Contract` against the real implementation: routes, verbs, payload shapes, status and error codes, validation messages.
-5. Check database changes: migration exists, applies cleanly where safe to do so, and the model snapshot matches. Never run destructive database commands.
-6. If the project documents a local way to run the API, call the endpoints (happy path and negatives). Otherwise state which criteria were verified by tests only.
-7. Never count a flaky or skipped test as passing. Never approve with a failing build or test.
-8. Look for security issues in the change: missing authorization or ownership checks, mass assignment, unvalidated input, secrets, sensitive data in logs/responses.
+4. Build so `contracts/openapi.json` regenerates; it must show no diff afterwards (otherwise the developer forgot to commit it) and must match the task's `Contract`: routes, verbs, payload shapes, status and error codes. Then confirm the implementation behaves as the spec says.
+5. If a database with this task's `_qa_` name is left over from an interrupted run, drop it first. Then **create a fresh test database** following "QA test database" in the `dotnet-mariadb-stack` skill (`<project>_qa_<taskid>` on localhost, login localhost/localhost): apply all migrations from zero with `dotnet ef database update --connection ...`, confirm the model snapshot matches (`dotnet ef migrations has-pending-model-changes`), and check the schema the task describes (columns, lengths, indexes, constraints).
+6. Run the API against that database (`ConnectionStrings__DefaultConnection` environment variable) and call the endpoints: happy path and every negative case, including data persisted correctly and another user's data refused. If the app cannot run, state which criteria were verified by tests only.
+7. **Always drop the test database at the end**, pass or fail (only names containing `_qa_`). Never touch any other database.
+8. Never count a flaky or skipped test as passing. Never approve with a failing build or test.
+9. Look for security issues in the change: missing authorization or ownership checks, mass assignment, unvalidated input, secrets, sensitive data in logs/responses.
 
 ## Verdict
 Write in the task's `QA` section: round number, each criterion with PASS/FAIL and the evidence (command + result), negative cases checked, and the numbered failures. Then set the status and end the final message with exactly one of:

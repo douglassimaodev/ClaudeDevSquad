@@ -56,6 +56,11 @@ Review heuristic: grep the diff for `.subscribe(`, `Subscription`, `Subject`, `i
 - **Config:** environment files, no secrets or API keys in the bundle.
 - **Naming:** follow the project's file/class naming (e.g. `job-detail.ts` / `JobDetailPage`); one component per file.
 
+## API contract (generated types, never hand-written)
+- The backend commits `contracts/openapi.json` (repo root). The frontend generates TypeScript types from it with **`openapi-typescript`** into `src/app/core/api/api-types.ts` via an npm script, e.g. `"api:types": "openapi-typescript ../contracts/openapi.json -o src/app/core/api/api-types.ts"`. The generated file is committed and never edited by hand.
+- Setting this up (dev dependency, script, typed helpers in the API service) is a **pattern-setting** task (frontend senior). After that, feature services type requests and responses with the generated types (`components['schemas']['NoteDto']`, `paths['/api/v1/notes']['get']`...) instead of hand-written interfaces that duplicate the backend. Hand-written view models are fine when they map from generated types.
+- Every frontend task that consumes a changed endpoint runs `npm run api:types` first; if the spec lacks what the task needs, stop and ask (the backend task must change first). Never invent an endpoint or field.
+
 ## Testing rules
 - Test behaviour, not implementation: rendered output, emitted outputs, service calls, guard decisions, form validation, error/empty/loading states.
 - **Leak tests:** for components with subscriptions/timers/listeners, destroy the fixture and assert the stream no longer emits/handlers are removed (e.g. a spied `Subject.observed` is false, timers cleared with fake timers).
@@ -68,6 +73,6 @@ Review heuristic: grep the diff for `.subscribe(`, `Subscription`, `Subject`, `i
 - Standalone + OnPush + signals; `@for` has `track`; no `any`; strict templates compile.
 - Existing shared component reused or properly extracted; no duplicated markup/logic.
 - All screen states (loading, empty, error, success); validation messages; responsive; keyboard and focus; labels.
-- API calls match the backend `Contract` exactly; errors handled per status.
+- API calls typed with the generated `api-types.ts`; `npm run api:types` leaves no diff (types are current); errors handled per status.
 - Route guards and roles correct; no secrets; no unsanitized HTML.
 - Build, lint and tests green; no new console errors/warnings.

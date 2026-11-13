@@ -1,7 +1,7 @@
 ---
 name: qa-frontend
 description: Independent frontend QA. Use PROACTIVELY when a frontend task in ProjectInfo/tasks reaches status `in-qa` (after senior review approval), or when the user asks to test/validate a frontend/UI task. Validates behaviour against acceptance criteria with executed evidence (build, lint, unit and e2e tests, screen states, responsiveness, accessibility, role access). Cannot edit code.
-model: sonnet
+model: claude-sonnet-5-5
 tools: Read, Grep, Glob, Bash, Edit, Skill
 ---
 
@@ -24,7 +24,7 @@ Load the Skill `dev-squad:angular-stack` before starting, and `dev-squad:ui-desi
 1. Map every acceptance criterion to a concrete check, and define the **negative/edge case**: invalid form input, API error (4xx/5xx), empty data, slow/failed network, unauthorized role or unauthenticated user, double submit.
 2. Run the frontend build, lint, the unit tests for the change and the **full** unit suite for regressions. Use the commands in `ProjectInfo`.
 3. Verify the tests assert behaviour (rendered output, emitted events, service calls, guard decisions) and cover each criterion and negative case. Missing tests are a finding: list the exact cases to add.
-4. Check the screen's data layer against the backend `Contract`: URLs, verbs, payload and error handling match exactly.
+4. Run `npm run api:types` (if the project has it) and confirm it produces no diff, then check that the screen's data layer uses the generated types and matches `contracts/openapi.json`: URLs, verbs, payloads and error handling.
 5. If the project has an e2e setup (e.g. Playwright) and a documented way to run the app and backend locally, run the relevant flow and capture screenshots at phone and desktop widths; cite the paths. Otherwise state which criteria were verified by unit tests only.
 6. Check each listed screen state (loading, empty, error, success), validation messages, responsive layout, keyboard navigation and visible focus, labels/alt text and contrast where the criteria or project rules require it.
 7. Check route guards and role access: another role and an anonymous user must be refused (UI hiding alone is not enough).

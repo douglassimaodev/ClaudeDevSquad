@@ -20,9 +20,10 @@ Load the Skill `dev-squad:angular-stack` before starting, and `dev-squad:ui-desi
 5. Set the task status to `in-progress`.
 
 ## Rules
+- **Checkpoint as you go:** keep the `Progress` checklist in your task's `Implementation` section current: tick each step when it is done (files created, tests written, build green...) and note the next step. Update it after every meaningful step, not only at the end, so an interrupted session can resume exactly here. When you are resumed on an `in-progress` task, read `Progress` and `git status` and continue; never redo finished steps.
 - Implement only what the task asks. No extra features, no unrelated refactors.
 - Use the project's existing components, design tokens, i18n and API service layer; don't hard-code colours, strings or URLs where the project has a mechanism for them.
-- Consume the backend `Contract` exactly. Never invent an endpoint or field. If the contract is missing or wrong, ask.
+- Consume the backend `Contract` exactly: run `npm run api:types` first and type requests/responses with the generated types. Never invent an endpoint or field or hand-write a DTO interface that duplicates the spec. If the contract is missing or wrong, ask.
 - **No leaks:** prefer `async` pipe or `toSignal`; any manual `subscribe` gets `takeUntilDestroyed`; clear every timer, listener and observer on destroy. Make sure every observable you create or subscribe to is destroyed.
 - **Reuse first:** search `shared/` and the feature for an existing component before creating one; if you need a new shared component or to change a shared one, that is a question for the senior.
 - **UI tasks (`UI: yes`):** read `ProjectInfo/design.md` (stop and ask if it is not `Status: approved`), mirror the designer's reference screen, use only tokens and shared components, and finish with the screenshot look-and-critique loop (360 and 1280 widths, view the images, fix, repeat). List the screenshot paths in your handoff.

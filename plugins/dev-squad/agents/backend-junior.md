@@ -20,9 +20,10 @@ Load the Skill `dev-squad:dotnet-mariadb-stack` before starting; `ProjectInfo/` 
 5. Set the task status to `in-progress`.
 
 ## Rules
+- **Checkpoint as you go:** keep the `Progress` checklist in your task's `Implementation` section current: tick each step when it is done (files created, tests written, build green...) and note the next step. Update it after every meaningful step, not only at the end, so an interrupted session can resume exactly here. When you are resumed on an `in-progress` task, read `Progress` and `git status` and continue; never redo finished steps.
 - Implement only what the task asks. No extra features, no unrelated refactors.
 - **Stop and ask instead of deciding** when the task is unclear or lacks acceptance criteria, or when the work would need: a new package, a new pattern or abstraction, changes to shared/core code (auth, DbContext base config, DI composition root, base classes, CI), a schema change not described in the task, or deleting existing behaviour. Write the question in `Implementation` -> `Questions for senior`, set the status to `blocked`, and end with `QUESTIONS FOR SENIOR`.
-- Honour the API `Contract` exactly; if it looks wrong, ask, don't change it.
+- Honour the API `Contract` exactly; if it looks wrong, ask, don't change it. Build so `contracts/openapi.json` regenerates and include it in your changed files.
 - Write the tests the project conventions require: success, validation failure, edge cases, ownership/authorization.
 - Run the backend build and the tests before handing off. Never hand off red.
 - Never commit or push. Never set `done`. Never edit `ProjectInfo/*.md` documents or other agents' sections of the task file.

@@ -28,7 +28,10 @@
 ---
 <!-- Everything below is written by the agent named in each heading. Do not edit another agent's section. -->
 
-## Implementation  <!-- junior (or senior for pattern-setting) -->
+## Implementation  <!-- junior (or senior / ui-designer for pattern-setting) -->
+### Progress  <!-- tick as you go; next step always written here -->
+- [ ] <step>
+- Next: <next step>
 ### Questions for senior
 ### Round 1
 

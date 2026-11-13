@@ -27,15 +27,32 @@
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
-      "Edit(./ProjectInfo/tasks/**)"
+      "Edit(./ProjectInfo/tasks/**)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef migrations list:*)",
+      "Bash(dotnet ef migrations has-pending-model-changes:*)",
+      "Bash(dotnet ef database update --connection \"Server=localhost;Port=3306;Database=*_qa_*)",
+      "Bash(dotnet run:*)",
+      "Bash(* -hlocalhost -ulocalhost -plocalhost -e \"DROP DATABASE IF EXISTS *_qa_*)",
+      "Bash(* -hlocalhost -ulocalhost -plocalhost -e \"SHOW *)",
+      "Bash(dotnet ef migrations script:*)",
+      "Bash(npm start:*)",
+      "Bash(npx ng serve:*)",
+      "Bash(npm run e2e:*)",
+      "Bash(npx playwright --version)",
+      "Bash(git branch:*)",
+      "Bash(git ls-files:*)",
+      "Bash(npm run api:types)"
     ],
     "ask": [
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(dotnet ef database update:*)",
+      "Bash(dotnet ef database update)",
       "Bash(dotnet add:*)",
-      "Bash(npm install :*)"
+      "Bash(npm install :*)",
+      "Bash(dotnet ef database drop:*)",
+      "Bash(npx playwright install:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

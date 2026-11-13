@@ -1,0 +1,5 @@
+#!/bin/sh
+# Auto-increments the dev-squad plugin version when a commit changes plugin files
+# and the version was not bumped by hand. Enable once per clone:
+#   git config core.hooksPath .githooks
+node scripts/bump-version.mjs --hook || exit 1

@@ -6,6 +6,22 @@ This project has a six-agent team. Subagents cannot call each other, so **this c
 
 Every agent reads `ProjectInfo/*.md` first (project, architecture, glossary...). Stack conventions (.NET + MariaDB, Angular) come from the plugin skills; `ProjectInfo/conventions-*.md` is an optional override. Agents detect versions and build/test commands from the code when ProjectInfo does not state them. Project rules there always win over agent defaults. If `ProjectInfo/` does not exist, run the `dev-squad:init-projectinfo` skill and ask the user to fill it in before any agent works. Never invent its contents.
 
+## Session start: resume first
+
+Work can stop at any moment (closed terminal, lost connection, used-up credits). The task files are the only state, so at the start of every session, before handling the user's message:
+
+1. List `ProjectInfo/tasks/T-*.md` and read each task's `Status`.
+2. If any task is `in-progress`, `in-review`, `changes-requested`, `in-qa`, `qa-failed` or `blocked`, show the user one line per task (`T-004 frontend — in-review, round 2`) and the next step for each.
+3. Check reality before trusting the file: `git status` / `git diff` for the files listed in the task, and the build for that area. If the code and the task file disagree, trust the code and correct the task's `Progress` notes first.
+4. Resume where the loop stopped, unless the user asks for something else:
+   - `in-progress` -> resume the same area's implementer with the task id; it continues from its `Progress` checklist instead of starting over.
+   - `in-review` -> start a fresh senior REVIEW. `changes-requested` / `qa-failed` -> the implementer, with the open numbered items.
+   - `in-qa` -> start the QA agent (it drops any leftover `_qa_` database for that task first).
+   - `blocked` -> show the open question; answer it via the senior (ANSWER) or ask the user.
+5. If nothing is open, say so in one line and handle the user's message.
+
+If the conversation is getting long, finish the current step, make sure the task file is up to date, and tell the user to continue in a new session: it will resume from the task files.
+
 ## The team
 
 | Agent | Role | Writes code? |
@@ -51,7 +67,13 @@ Orchestrator loop for each task:
 2. `QUESTIONS FOR SENIOR` -> start the senior in ANSWER mode (or ask the user if it is a business decision), then resume the junior.
 3. `READY FOR REVIEW` -> start the senior in REVIEW mode. `CHANGES REQUESTED` -> back to the **same area's junior**, then review again.
 4. `REVIEW APPROVED` -> start the matching QA agent. `QA FAILED` -> back to the junior, then review, then QA again.
-5. `QA APPROVED` -> task is `done`; show the user one summary line and continue with the next `todo` task if the user asked for a whole feature.
+5. `QA APPROVED` -> task is `done`. Show the user one summary line plus a **suggested commit** for that task: the files it changed (from the task's `Implementation` section checked against `git status`; exclude other tasks' files and generated junk) and a message in this form:
+   ```
+   <type>(<area>): <task title> [T-NNN]
+
+   <one or two lines on what changed and why>
+   ```
+   `type` is feat / fix / refactor / test / chore. Never run `git add` or `git commit` yourself; the user commits each task when they choose. Then continue with the next `todo` task if the user asked for a whole feature.
 6. Stop and ask the user on: a 3rd review round for one task, QA `BLOCKED`, `ESCALATE`, a business decision, or a red build outside the task.
 
 Show the user one short line per step (e.g. `T-012 round 2: backend-senior requested 3 changes`) and each QA verdict in full.
@@ -64,11 +86,13 @@ Show the user one short line per step (e.g. `T-012 round 2: backend-senior reque
 
 ## Full-stack features
 
-A feature spans two tasks, one per area, linked with `Depends on:`. The backend task defines the API contract (routes, request/response shapes, error codes) in its `Contract` section; the frontend task consumes exactly that. A frontend task is not started until its backend dependency is `done`, unless the contract is written and the user agrees to proceed against a stub.
+A feature spans two tasks, one per area, linked with `Depends on:`. The backend task defines the API contract (routes, request/response shapes, error codes) in its `Contract` section and commits the regenerated `contracts/openapi.json`; the frontend task regenerates its TypeScript types from that file (`npm run api:types`) and consumes exactly that. A frontend task is not started until its backend dependency is `done`, unless the contract is written and the user agrees to proceed against a stub.
 
 ## Rules for everyone
 
 - **Never `git commit` or `git push`** unless the user explicitly asks in the current conversation. Report changed files and a suggested commit message instead.
+- QA backend creates its own scratch database per task (`<project>_qa_<taskid>` on localhost, login localhost/localhost, see the `dotnet-mariadb-stack` skill) and drops it afterwards. No agent touches any other database without the user's approval.
 - Do not edit `ProjectInfo/*.md` project documents (only `ProjectInfo/tasks/*` and, for seniors, `ProjectInfo/LESSONS.md`). If a project doc is wrong or missing, say so.
 - Lessons: when review or QA finds a repeatable mistake, the senior appends one rule to `ProjectInfo/LESSONS.md`. Juniors read it before every task.
+- **Promote stack lessons to the plugin:** when a feature is finished (or the user stops), list the `Scope: stack` lessons that are not `Promoted` yet and offer to add them to the plugin. If the user agrees and the plugin repository is available locally (ask for its path, e.g. `C:devClaudeAgent`), add each as one checklist line in the matching skill (`dotnet-mariadb-stack`, `angular-stack` or `ui-design`), then mark the lesson `Promoted: <next plugin version>` here. Never push the plugin repository; the user reviews and commits it, and the version bumps itself on commit.
 - Every response from this conversation begins with `[ACTIVE_AGENT: <agent name or ORCHESTRATOR>]`.

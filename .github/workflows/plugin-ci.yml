@@ -1,0 +1,60 @@
+name: dev-squad plugin CI
+
+on:
+  pull_request:
+    paths:
+      - 'plugins/dev-squad/**'
+      - '.claude-plugin/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Validate plugin manifest
+        run: claude plugin validate plugins/dev-squad
+      - name: Version was bumped
+        if: github.event_name == 'pull_request'
+        run: |
+          base=$(git show origin/${{ github.base_ref }}:plugins/dev-squad/.claude-plugin/plugin.json | node -pe 'JSON.parse(require("fs").readFileSync(0)).version')
+          head=$(node -pe 'require("./plugins/dev-squad/.claude-plugin/plugin.json").version')
+          market=$(node -pe 'require("./.claude-plugin/marketplace.json").plugins.find(p=>p.name==="dev-squad").version')
+          echo "base=$base head=$head marketplace=$market"
+          [ "$head" = "$market" ] || { echo "::error::plugin.json ($head) and marketplace.json ($market) versions differ"; exit 1; }
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -v '/evals/' | grep -q '^plugins/dev-squad/'; then
+            [ "$base" != "$head" ] || { echo "::error::Plugin files changed but the version is still $head. Enable the hook (git config core.hooksPath .githooks) or run node scripts/bump-version.mjs"; exit 1; }
+          fi
+
+  evals:
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g @anthropic-ai/claude-code
+      - name: Run eval suite
+        if: env.ANTHROPIC_API_KEY != ''
+        working-directory: plugins/dev-squad
+        run: >
+          claude plugin eval . --trust-plugin --scaffold --runs 1 --ablation none
+          --threshold 0.8 --max-cost-usd 5 --no-publish
+          --report evals/results/report.html
+      - name: Skip notice
+        if: env.ANTHROPIC_API_KEY == ''
+        run: echo "::warning::ANTHROPIC_API_KEY secret not set; evals skipped."
+      - uses: actions/upload-artifact@v4
+        if: always() && env.ANTHROPIC_API_KEY != ''
+        with:
+          name: eval-report
+          path: plugins/dev-squad/evals/results/

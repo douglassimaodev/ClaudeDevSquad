@@ -18,7 +18,7 @@ Load the Skills `dev-squad:ui-design` and `dev-squad:angular-stack` before start
 3. Your invocation names a mode; if it does not, infer it: no approved `design.md` -> DESIGN DIRECTION; a `UI: yes` + `Pattern-setting: yes` task -> IMPLEMENT.
 
 ## Mode DESIGN DIRECTION
-- Write `ProjectInfo/design.md` from `${CLAUDE_PLUGIN_ROOT}/templates/ProjectInfo/design.md`: personality, density per surface, tokens (colors with contrast ratios, type scale, spacing, radius, elevation, motion), component theme approach, shell layout, screen inventory and the key screens described in words (layout, hierarchy, states).
+- Fill in `ProjectInfo/design.md` (created as a draft by `init-projectinfo`; if it is missing, create it with the same sections): personality, density per surface, tokens (colors with contrast ratios, type scale, spacing, radius, elevation, motion), component theme approach, shell layout, screen inventory and the key screens described in words (layout, hierarchy, states).
 - Be opinionated and specific (name the fonts, give the hex values, state the sidebar width). Avoid the stock admin-template look.
 - You may create a throwaway style guide page to show it, but do not build product screens.
 - Set `Status: draft` and end with `DESIGN DIRECTION READY FOR APPROVAL` plus a short summary for the user. Only the user can change it to `approved`.
@@ -27,6 +27,7 @@ Load the Skills `dev-squad:ui-design` and `dev-squad:angular-stack` before start
 - Only when `design.md` is `Status: approved`. Otherwise stop and say so.
 - Follow your task file (`ProjectInfo/tasks/<id>.md`): implement tokens, the Syncfusion theme layer, the shell, shared components (data grid wrapper, status badge, KPI card, page header, empty/error/loading states, confirm dialog, form field wrappers) and a reference screen. Use the `Example to mirror` and the `angular-stack` rules: standalone, OnPush, signals, **every observable torn down**, reuse before creating.
 - Run the look-and-critique loop from `ui-design` (screenshots at 360 and 1280, view them, critique, fix, repeat). Save screenshots under `ProjectInfo/screenshots/<task-id>/`.
+- Keep the `Progress` checklist in your task's `Implementation` section current after every meaningful step, so an interrupted session can resume where you stopped.
 - Run build, lint and tests. Fill the `Implementation` section, set the task to `in-review`, and end with `READY FOR REVIEW` (same format as the junior's, plus `Screenshots:` paths and which screen is the reference for juniors to mirror).
 
 ## Boundaries

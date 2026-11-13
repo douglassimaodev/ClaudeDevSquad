@@ -9,8 +9,8 @@ A Claude Code plugin with a seven-agent dev team for .NET + Angular projects.
 | `frontend-senior` | claude-opus-5-5 | Plans frontend tasks, reviews frontend code, answers the junior, implements pattern-setting tasks |
 | `frontend-junior` | claude-sonnet-5-5 | Implements one frontend task |
 | `ui-designer` | claude-opus-5-5 | Writes the design direction, builds the design system (tokens, Syncfusion theme, admin shell, shared components) and pattern-setting UI |
-| `qa-backend` | sonnet | Validates backend tasks with executed evidence (read-only on code) |
-| `qa-frontend` | sonnet | Validates frontend tasks with executed evidence (read-only on code) |
+| `qa-backend` | claude-sonnet-5-5 | Validates backend tasks with executed evidence (read-only on code) |
+| `qa-frontend` | claude-sonnet-5-5 | Validates frontend tasks with executed evidence (read-only on code) |
 
 ## How they communicate
 
@@ -29,8 +29,24 @@ senior (PLAN) -> T-001 todo -> junior -> in-review -> senior (REVIEW) -> changes
 
 1. This repository is the marketplace (`douglassimaodev/ClaudeDevSquad`, marketplace name `dev-squad-marketplace`); nothing to publish. To also offer it from another marketplace, copy `plugins/dev-squad` there.
 2. In the project, merge `plugins/dev-squad/templates/settings.snippet.json` into `.claude/settings.json` (registers the marketplace, enables `dev-squad@dev-squad-marketplace` and sets permissions).
-3. Start Claude Code and run the `dev-squad:init-projectinfo` skill. It creates and pre-fills `ProjectInfo/`. Complete `project.md`.
+3. Start Claude Code and run the `dev-squad:init-projectinfo` skill. It creates and pre-fills `ProjectInfo/`, merges the permissions into `.claude/settings.json` and checks the QA database login. Complete `project.md`.
 4. Ask for a feature ("plan the partner approval screen"). The right agent starts automatically.
+
+## QA test database (one-time setup per machine)
+
+`qa-backend` creates a fresh MariaDB database per task (`<project>_qa_<taskid>`), applies all migrations, tests against it and drops it. It always connects to `localhost:3306` as user `localhost` / password `localhost`, which may only touch databases whose name contains `_qa_`. Create that login once, as root:
+
+```sql
+CREATE USER IF NOT EXISTS 'localhost'@'localhost' IDENTIFIED BY 'localhost';
+GRANT ALL PRIVILEGES ON `%_qa_%`.* TO 'localhost'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+## Maintaining the plugin
+
+- **Versioning is automatic.** Enable the hook once per clone: `git config core.hooksPath .githooks`. Every commit that changes `plugins/dev-squad/` without a manual bump increments the patch version in `plugin.json` and `marketplace.json` and moves the `Unreleased` notes in `CHANGELOG.md` under it. For minor/major: `node scripts/bump-version.mjs minor` (or `BUMP=minor git commit ...`).
+- **CI** (`.github/workflows/plugin-ci.yml`) on pull requests: validates the manifest, fails if plugin files changed without a version bump, and runs the eval suite when the `ANTHROPIC_API_KEY` repository secret is set (about $2 per run, capped at $5).
+- **Evals locally:** see `plugins/dev-squad/evals/README.md`.
 
 ## Skills
 
