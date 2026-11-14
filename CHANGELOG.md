@@ -4,6 +4,13 @@ All notable changes to the `dev-squad` plugin. Write notes under **Unreleased** 
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-14
+
+### Changed
+- agents/backend-senior.md
+- agents/frontend-senior.md
+- agents/techlead.md
+
 ## [0.3.2] - 2026-11-13
 
 ### Added
